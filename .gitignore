@@ -1,0 +1,27 @@
+# Maven
+/.mvn/
+/target/
+
+# IntelliJ IDEA
+.idea/
+/*.iml
+
+# Eclipse
+/.classpath
+/.project
+/.settings/
+
+# Arquivos de log
+*.log
+
+# Arquivos temporários do sistema
+.DS_Store
+Thumbs.db
+
+# Arquivos de backup
+*~
+*.bak
+*.swp
+
+# Arquivos de configuração do Maven
+.mvn/wrapper/maven-wrapper.jar

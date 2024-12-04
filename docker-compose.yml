@@ -1,0 +1,13 @@
+version: '3.8'
+
+services:
+
+  credit-db:
+    image: mysql:latest
+    container_name: credit-db
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: mysql
+      MYSQL_DATABASE: credit-db
+    ports:
+      - "3306:3306"
