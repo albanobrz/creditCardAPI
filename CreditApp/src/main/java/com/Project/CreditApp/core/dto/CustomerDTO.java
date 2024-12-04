@@ -1,16 +1,14 @@
 package com.Project.CreditApp.core.dto;
 
-import com.Project.CreditApp.core.enums.ECardType;
-import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Data
-@Builder
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 public class CustomerDTO {
 
     private long id;
@@ -18,5 +16,5 @@ public class CustomerDTO {
     private String email;
     private String phone;
     private AddressDTO address;
-    private AccountDTO account;
+    private long accountId;
 }

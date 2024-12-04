@@ -1,7 +1,5 @@
 package com.Project.CreditApp.core.dto;
 
-import com.Project.CreditApp.core.model.Card;
-import com.Project.CreditApp.core.model.Customer;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -17,7 +15,7 @@ public class AccountDTO {
 
     private long id;
     private String accountNumber;
-    private CustomerDTO customer;
+    private long customerId;
     private List<CardDTO> cards;
     private boolean active;
 }
