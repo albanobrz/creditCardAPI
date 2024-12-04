@@ -40,6 +40,7 @@ public class Card {
     @JoinColumn(name = "account_id", nullable = false)
     private Account account;
 
+    @Builder.Default
     @Column(nullable = false)
     private Boolean active = false;
 

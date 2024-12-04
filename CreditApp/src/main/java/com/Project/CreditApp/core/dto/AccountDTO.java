@@ -16,6 +16,7 @@ public class AccountDTO {
     private long id;
     private String accountNumber;
     private long customerId;
-    private List<CardDTO> cards;
+//    private List<CardDTO> cards;
     private boolean active;
+    private String customerName;
 }

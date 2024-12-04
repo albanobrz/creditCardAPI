@@ -24,13 +24,14 @@ public class Account {
     @Column(nullable = false, unique = true)
     private String accountNumber;
 
-    @OneToOne
+    @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "customer_id", nullable = false)
     private Customer customer;
 
     @OneToMany(mappedBy = "account", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Card> cards;
 
+    @Builder.Default
     @Column(nullable = false)
     private Boolean active = true;
 
