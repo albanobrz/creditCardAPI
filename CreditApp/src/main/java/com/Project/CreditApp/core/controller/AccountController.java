@@ -1,7 +1,10 @@
 package com.Project.CreditApp.core.controller;
 
 import com.Project.CreditApp.config.exception.BusinessException;
+import com.Project.CreditApp.config.response.ApiResponse;
+import com.Project.CreditApp.config.response.Messages;
 import com.Project.CreditApp.core.dto.AccountDTO;
+import com.Project.CreditApp.core.dto.CreateAccountDTO;
 import com.Project.CreditApp.core.dto.CustomerDTO;
 import com.Project.CreditApp.core.service.AccountService;
 import lombok.RequiredArgsConstructor;
@@ -16,8 +19,8 @@ public class AccountController {
     private final AccountService accountService;
 
     @PostMapping
-    public ResponseEntity<AccountDTO> createAccount(@RequestBody CustomerDTO customerDTO) {
-        AccountDTO accountDTO = accountService.createAccount(customerDTO);
+    public ResponseEntity<AccountDTO> createAccount(@RequestBody CreateAccountDTO customer) {
+        AccountDTO accountDTO = accountService.createAccount(customer);
         return new ResponseEntity<>(accountDTO, HttpStatus.CREATED);
     }
 
@@ -28,8 +31,8 @@ public class AccountController {
     }
 
     @PatchMapping("/{cpf}/deactivate")
-    public ResponseEntity<String> deactivateAccount(@PathVariable String cpf) {
+    public ResponseEntity<ApiResponse> deactivateAccount(@PathVariable String cpf) {
         accountService.deactivateAccount(cpf);
-        return ResponseEntity.ok("Conta desativada com sucesso.");
+        return ResponseEntity.ok(new ApiResponse(Messages.ACCOUNT_DEACTIVATED_SUCCESSFULLY));
     }
 }

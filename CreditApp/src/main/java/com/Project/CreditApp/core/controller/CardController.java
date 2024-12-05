@@ -1,6 +1,9 @@
 package com.Project.CreditApp.core.controller;
 
+import com.Project.CreditApp.config.response.ApiResponse;
+import com.Project.CreditApp.config.response.Messages;
 import com.Project.CreditApp.core.dto.CardDTO;
+import com.Project.CreditApp.core.dto.CreateCardDTO;
 import com.Project.CreditApp.core.enums.ECardType;
 import com.Project.CreditApp.core.service.CardService;
 import lombok.RequiredArgsConstructor;
@@ -18,21 +21,21 @@ public class CardController {
     private final CardService cardService;
 
     @PostMapping("/{accountNumber}")
-    public ResponseEntity<CardDTO> createCard(@PathVariable String accountNumber, @RequestBody CardDTO cardDTO) {
+    public ResponseEntity<CardDTO> createCard(@PathVariable String accountNumber, @RequestBody CreateCardDTO cardDTO) {
         CardDTO card = cardService.createCard(accountNumber, cardDTO);
         return new ResponseEntity<>(card, HttpStatus.CREATED);
     }
 
     @PatchMapping("/{cardNumber}/activate")
-    public ResponseEntity<String> activateCard(@PathVariable String cardNumber) {
+    public ResponseEntity<ApiResponse> activateCard(@PathVariable String cardNumber) {
         cardService.activateCard(cardNumber);
-        return ResponseEntity.ok("Cartão ativado com sucesso.");
+        return ResponseEntity.ok(new ApiResponse(Messages.CARD_ACTIVATED_SUCCESSFULLY));
     }
 
     @PatchMapping("/{cardNumber}/block")
-    public ResponseEntity<String> blockCard(@PathVariable String cardNumber) {
+    public ResponseEntity<ApiResponse> blockCard(@PathVariable String cardNumber) {
         cardService.blockCard(cardNumber);
-        return ResponseEntity.ok("Cartão bloqueado com sucesso.");
+        return ResponseEntity.ok(new ApiResponse(Messages.CARD_BLOCKED_SUCCESSFULLY));
     }
 
     @GetMapping("/{accountNumber}")

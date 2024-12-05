@@ -19,6 +19,7 @@ public class CardDTO {
     private String holderName;
     private String expirationDate;
     private ECardType cardType;
+    private String cvv;
     private long accountId;
     private boolean active;
     private boolean blocked;

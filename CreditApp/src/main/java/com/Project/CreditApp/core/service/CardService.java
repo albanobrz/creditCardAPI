@@ -1,6 +1,8 @@
 package com.Project.CreditApp.core.service;
 
 import com.Project.CreditApp.config.exception.BusinessException;
+import com.Project.CreditApp.config.response.Messages;
+import com.Project.CreditApp.core.dto.CreateCardDTO;
 import com.Project.CreditApp.core.enums.ECardType;
 import com.Project.CreditApp.core.dto.CardDTO;
 import com.Project.CreditApp.core.model.Account;
@@ -24,21 +26,21 @@ public class CardService {
     private final CardRepository cardRepository;
     private final AccountRepository accountRepository;
 
-    public CardDTO createCard(String accountNumber, CardDTO cardDTO) {
+    public CardDTO createCard(String accountNumber, CreateCardDTO cardDTO) {
         ECardType cardType = cardDTO.getCardType();
 
         Account account = accountRepository.findByAccountNumber(accountNumber)
-                .orElseThrow(() -> new BusinessException("Conta não encontrada.", HttpStatus.NOT_FOUND));
+                .orElseThrow(() -> new BusinessException(Messages.ACCOUNT_NOT_FOUND, HttpStatus.NOT_FOUND));
 
         if (!account.getActive()) {
-            throw new BusinessException("A conta está desativada.", HttpStatus.BAD_REQUEST);
+            throw new BusinessException(Messages.ACCOUNT_IS_DEACTIVATED, HttpStatus.BAD_REQUEST);
         }
 
         // caso virtual:
         // se não existir cartão físico, voltar erro
         // se nenhum cartão físico estiver ativo, voltar erro
         // se existir cartão físico sem ativar, mas pelo menos um estar ativo, criar
-        // se existir um cartão físico ativado, criar cartão (sempre já ativo)
+        // se existir um cartão físico ativado, criar cartão (sempre já ativo para virtuais)
 
         // caso físico:
         // sempre criar (criar desativado)
@@ -48,14 +50,14 @@ public class CardService {
         if (cardType == ECardType.VIRTUAL) {
             // verifica se tem cartão físico
             if (physicalCards.isEmpty()) {
-                throw new BusinessException("Não é possível criar um cartão virtual sem um cartão físico associado.", HttpStatus.BAD_REQUEST);
+                throw new BusinessException(Messages.NOT_POSSIBLE_CREATE_CARD_WITHOUT_PHYSIC_CARD, HttpStatus.BAD_REQUEST);
             }
 
             // verifica se o cartão físico existente está ativo
             boolean hasActivePhysicalCard = physicalCards.stream().anyMatch(Card::getActive);
 
             if (!hasActivePhysicalCard) {
-                throw new BusinessException("Não é possível criar um cartão virtual sem um cartão físico ativo.", HttpStatus.BAD_REQUEST);
+                throw new BusinessException(Messages.NOT_POSSIBLE_CREATE_CARD_WITHOUT_ACTIVATED_PHYSIC_CARD, HttpStatus.BAD_REQUEST);
             }
 
             // caso exista um cartão físico ativo, cria-se o virtual
@@ -84,15 +86,15 @@ public class CardService {
             return mapToCardDTO(physicalCardToCreate);
         }
 
-        throw new BusinessException("Tipo de cartão inválido.", HttpStatus.BAD_REQUEST);
+        throw new BusinessException(Messages.INVALID_CARD_TYPE, HttpStatus.BAD_REQUEST);
     }
 
     public void activateCard(String cardNumber) {
         Card card = cardRepository.findByCardNumber(cardNumber)
-                .orElseThrow(() -> new BusinessException("Cartão não encontrado.", HttpStatus.NOT_FOUND));
+                .orElseThrow(() -> new BusinessException(Messages.CARD_NOT_FOUND, HttpStatus.NOT_FOUND));
 
         if (card.getActive()) {
-            throw new BusinessException("Cartão já ativado.", HttpStatus.BAD_REQUEST);
+            throw new BusinessException(Messages.CARD_ALREADY_ACTIVATED, HttpStatus.BAD_REQUEST);
         }
 
         card.setActive(true);
@@ -102,10 +104,10 @@ public class CardService {
 
     public void blockCard(String cardNumber) {
         Card card = cardRepository.findByCardNumber(cardNumber)
-                .orElseThrow(() -> new BusinessException("Cartão não encontrado.", HttpStatus.NOT_FOUND));
+                .orElseThrow(() -> new BusinessException(Messages.CARD_NOT_FOUND, HttpStatus.NOT_FOUND));
 
         if (card.getBlocked()) {
-            throw new BusinessException("Cartão já bloqueado.", HttpStatus.BAD_REQUEST);
+            throw new BusinessException(Messages.CARD_ALREADY_BLOCKED, HttpStatus.BAD_REQUEST);
         }
 
         card.setBlocked(true);
@@ -115,7 +117,7 @@ public class CardService {
 
     public List<CardDTO> getCardsFromAccount(String accountNumber) {
         Account account = accountRepository.findByAccountNumber(accountNumber)
-                .orElseThrow(() -> new BusinessException("Conta não encontrada.", HttpStatus.NOT_FOUND));
+                .orElseThrow(() -> new BusinessException(Messages.ACCOUNT_NOT_FOUND, HttpStatus.NOT_FOUND));
 
         List<Card> cards = cardRepository.findByAccount(account);
 
@@ -132,6 +134,7 @@ public class CardService {
                 .cardNumber(card.getCardNumber())
                 .holderName(card.getHolderName())
                 .expirationDate(card.getExpirationDate())
+                .cvv(card.getCvv())
                 .accountId(card.getAccount().getId())
                 .blocked(card.getBlocked())
                 .build();
