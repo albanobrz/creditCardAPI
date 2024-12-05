@@ -11,6 +11,7 @@ import com.Project.CreditApp.core.model.Customer;
 import com.Project.CreditApp.core.repository.AccountRepository;
 import com.Project.CreditApp.core.repository.CustomerRepository;
 import com.Project.CreditApp.core.utils.AccountUtils;
+import com.Project.CreditApp.core.utils.MapperUtils;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -22,6 +23,8 @@ public class AccountService {
     private final AccountRepository accountRepository;
     private final CustomerRepository customerRepository;
 
+    private final MapperUtils mapperUtils;
+
     public AccountDTO createAccount(CreateAccountDTO customerData) {
         if (customerRepository.existsByCpf(customerData.getCpf())) {
             throw new BusinessException(Messages.CPF_ALREADY_REGISTERED, HttpStatus.CONFLICT);
@@ -30,19 +33,19 @@ public class AccountService {
             throw new BusinessException(Messages.EMAIL_ALREADY_REGISTERED, HttpStatus.CONFLICT);
         }
 
-        Customer customer = mapToCustomerEntity(customerData);
+        Customer customer = mapperUtils.mapToCustomerEntity(customerData);
         customer = customerRepository.save(customer);
 
-        String accountNumber = AccountUtils.generateAccountNumber();
         var account = Account.builder()
-                .accountNumber(accountNumber)
+                .accountNumber(AccountUtils.generateAccountNumber())
+                .sortCode(AccountUtils.generateSortCode())
                 .customer(customer)
                 .active(true)
                 .build();
 
         account = accountRepository.save(account);
 
-        return mapToAccountDTO(account);
+        return mapperUtils.mapToAccountDTO(account);
     }
 
     public AccountDTO getAccountByCpf(String cpf) {
@@ -52,7 +55,7 @@ public class AccountService {
         var account = accountRepository.findByCustomer(customer)
                 .orElseThrow(() -> new BusinessException(Messages.ACCOUNT_NOT_FOUND_FOR_CLIENT, HttpStatus.NOT_FOUND));
 
-        return mapToAccountDTO(account);
+        return mapperUtils.mapToAccountDTO(account);
     }
 
     public void deactivateAccount(String cpf) {
@@ -68,38 +71,5 @@ public class AccountService {
 
         account.setActive(false);
         accountRepository.save(account);
-    }
-
-
-    // TODO: refatorar esses maps, ver se tem alguma lib que faz isso
-    private Customer mapToCustomerEntity(CreateAccountDTO customerDTO) {
-        var address = Address.builder()
-                .street(customerDTO.getAddress().getStreet())
-                .city(customerDTO.getAddress().getCity())
-                .state(customerDTO.getAddress().getState())
-                .zipCode(customerDTO.getAddress().getZipCode())
-                .build();
-
-        Customer customer = Customer.builder()
-                .name(customerDTO.getName())
-                .cpf(customerDTO.getCpf())
-                .email(customerDTO.getEmail())
-                .phone(customerDTO.getPhone())
-                .build();
-
-        address.setCustomer(customer);
-        customer.setAddress(address);
-
-        return customer;
-    }
-
-    private AccountDTO mapToAccountDTO(Account account) {
-        return AccountDTO.builder()
-                .id(account.getId())
-                .accountNumber(account.getAccountNumber())
-                .customerId(account.getCustomer().getId())
-                .active(account.getActive())
-                .customerName(account.getCustomer().getName())
-                .build();
     }
 }

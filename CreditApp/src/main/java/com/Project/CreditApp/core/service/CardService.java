@@ -10,6 +10,7 @@ import com.Project.CreditApp.core.model.Card;
 import com.Project.CreditApp.core.repository.AccountRepository;
 import com.Project.CreditApp.core.repository.CardRepository;
 import com.Project.CreditApp.core.utils.CardUtils;
+import com.Project.CreditApp.core.utils.MapperUtils;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -25,6 +26,8 @@ public class CardService {
 
     private final CardRepository cardRepository;
     private final AccountRepository accountRepository;
+
+    private final MapperUtils mapperUtils;
 
     public CardDTO createCard(String accountNumber, CreateCardDTO cardDTO) {
         ECardType cardType = cardDTO.getCardType();
@@ -71,19 +74,20 @@ public class CardService {
             virtualCard.setExpirationDate(String.valueOf(LocalDate.now().plusYears(6)));
             cardRepository.save(virtualCard);
 
-            return mapToCardDTO(virtualCard);
-        } else if (cardType == ECardType.PHYSICAL) {
+            return mapperUtils.mapToCardDTO(virtualCard);
+        }
+
+        if (cardType == ECardType.PHYSICAL) {
             Card physicalCardToCreate = new Card();
             physicalCardToCreate.setAccount(account);
             physicalCardToCreate.setCardType(ECardType.PHYSICAL);
-            physicalCardToCreate.setActive(false); // Físico começa inativo
             physicalCardToCreate.setHolderName(account.getCustomer().getName());
             physicalCardToCreate.setCardNumber(CardUtils.generateCardNumber());
             physicalCardToCreate.setCvv(CardUtils.generateCvv());
             physicalCardToCreate.setExpirationDate(String.valueOf(LocalDate.now().plusYears(6)));
             cardRepository.save(physicalCardToCreate);
 
-            return mapToCardDTO(physicalCardToCreate);
+            return mapperUtils.mapToCardDTO(physicalCardToCreate);
         }
 
         throw new BusinessException(Messages.INVALID_CARD_TYPE, HttpStatus.BAD_REQUEST);
@@ -122,21 +126,7 @@ public class CardService {
         List<Card> cards = cardRepository.findByAccount(account);
 
         return cards.stream()
-                .map(this::mapToCardDTO)
+                .map(mapperUtils::mapToCardDTO)
                 .collect(Collectors.toList());
-    }
-
-    private CardDTO mapToCardDTO(Card card) {
-        return CardDTO.builder()
-                .id(card.getId())
-                .cardType(card.getCardType())
-                .active(card.getActive())
-                .cardNumber(card.getCardNumber())
-                .holderName(card.getHolderName())
-                .expirationDate(card.getExpirationDate())
-                .cvv(card.getCvv())
-                .accountId(card.getAccount().getId())
-                .blocked(card.getBlocked())
-                .build();
     }
 }

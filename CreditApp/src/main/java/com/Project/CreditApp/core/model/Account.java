@@ -24,6 +24,9 @@ public class Account {
     @Column(nullable = false, unique = true)
     private String accountNumber;
 
+    @Column(nullable = false)
+    private String sortCode; // equivalente a número da agência
+
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "customer_id", nullable = false)
     private Customer customer;

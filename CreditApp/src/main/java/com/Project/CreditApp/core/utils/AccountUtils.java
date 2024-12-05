@@ -13,4 +13,8 @@ public class AccountUtils {
         }
         return accountNumber.toString();
     }
+
+    public static String generateSortCode() {
+        return "0001"; // estou trazendo o número da agência como sendo sempre igual, no caso de não haver banco físico
+    }
 }
