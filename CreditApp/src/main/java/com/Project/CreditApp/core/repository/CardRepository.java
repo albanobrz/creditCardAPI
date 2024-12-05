@@ -12,7 +12,7 @@ import java.util.Optional;
 @Repository
 public interface CardRepository extends JpaRepository<Card, Long> {
 
-    Optional<Card> findByAccountAndCardType(Account account, ECardType cardType);
+    List<Card> findByAccountAndCardType(Account account, ECardType cardType);
 
     Optional<Card> findByCardNumber(String cardNumber);
 

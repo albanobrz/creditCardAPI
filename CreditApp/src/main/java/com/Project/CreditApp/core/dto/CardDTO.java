@@ -21,4 +21,5 @@ public class CardDTO {
     private ECardType cardType;
     private long accountId;
     private boolean active;
+    private boolean blocked;
 }

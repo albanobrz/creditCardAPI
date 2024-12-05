@@ -24,7 +24,6 @@ public class CardService {
     private final CardRepository cardRepository;
     private final AccountRepository accountRepository;
 
-    // TODO: ver o porque do retorno não está conforme esperado no body
     public CardDTO createCard(String accountNumber, CardDTO cardDTO) {
         ECardType cardType = cardDTO.getCardType();
 
@@ -44,17 +43,18 @@ public class CardService {
         // caso físico:
         // sempre criar (criar desativado)
 
-        Optional<Card> physicalCard = cardRepository.findByAccountAndCardType(account, ECardType.PHYSICAL);
+        List<Card> physicalCards = cardRepository.findByAccountAndCardType(account, ECardType.PHYSICAL);
 
-        // Caso cartão virtual
         if (cardType == ECardType.VIRTUAL) {
             // verifica se tem cartão físico
-            if (physicalCard.isEmpty()) {
+            if (physicalCards.isEmpty()) {
                 throw new BusinessException("Não é possível criar um cartão virtual sem um cartão físico associado.", HttpStatus.BAD_REQUEST);
             }
 
             // verifica se o cartão físico existente está ativo
-            if (physicalCard.get().getActive()) {
+            boolean hasActivePhysicalCard = physicalCards.stream().anyMatch(Card::getActive);
+
+            if (!hasActivePhysicalCard) {
                 throw new BusinessException("Não é possível criar um cartão virtual sem um cartão físico ativo.", HttpStatus.BAD_REQUEST);
             }
 
@@ -133,6 +133,7 @@ public class CardService {
                 .holderName(card.getHolderName())
                 .expirationDate(card.getExpirationDate())
                 .accountId(card.getAccount().getId())
+                .blocked(card.getBlocked())
                 .build();
     }
 }

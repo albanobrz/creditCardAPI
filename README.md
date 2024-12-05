@@ -5,3 +5,6 @@
 
 #### Subir banco
     - docker-compose up
+
+#### Modelagem
+![img.png](img.png)

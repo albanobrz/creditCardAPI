@@ -19,8 +19,8 @@ public class CardController {
 
     @PostMapping("/{accountNumber}")
     public ResponseEntity<CardDTO> createCard(@PathVariable String accountNumber, @RequestBody CardDTO cardDTO) {
-        cardService.createCard(accountNumber, cardDTO);
-        return new ResponseEntity<>(cardDTO, HttpStatus.CREATED);
+        CardDTO card = cardService.createCard(accountNumber, cardDTO);
+        return new ResponseEntity<>(card, HttpStatus.CREATED);
     }
 
     @PatchMapping("/{cardNumber}/activate")

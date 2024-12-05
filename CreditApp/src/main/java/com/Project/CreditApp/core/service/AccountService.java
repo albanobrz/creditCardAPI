@@ -24,6 +24,9 @@ public class AccountService {
         if (customerRepository.existsByCpf(customerDTO.getCpf())) {
             throw new BusinessException("CPF já cadastrado.", HttpStatus.CONFLICT);
         }
+        if (customerRepository.existsByEmail(customerDTO.getEmail())) {
+            throw new BusinessException("Email já cadastrado.", HttpStatus.CONFLICT);
+        }
 
         Customer customer = mapToCustomerEntity(customerDTO);
         customer = customerRepository.save(customer);
