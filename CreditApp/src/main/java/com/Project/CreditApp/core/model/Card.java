@@ -44,6 +44,10 @@ public class Card {
     @Column(nullable = false)
     private Boolean active = false;
 
+    @Builder.Default
+    @Column(nullable = false)
+    private Boolean blocked = false;
+
     @Column(nullable = false, updatable = false)
     private LocalDateTime createdAt;
 

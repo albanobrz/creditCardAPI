@@ -30,6 +30,6 @@ public class AccountController {
     @PatchMapping("/{cpf}/deactivate")
     public ResponseEntity<String> deactivateAccount(@PathVariable String cpf) {
         accountService.deactivateAccount(cpf);
-        return ResponseEntity.ok("Account successfully deactivated");
+        return ResponseEntity.ok("Conta desativada com sucesso.");
     }
 }
