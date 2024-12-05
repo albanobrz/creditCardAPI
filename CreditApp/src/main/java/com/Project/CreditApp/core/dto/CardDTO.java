@@ -23,4 +23,5 @@ public class CardDTO {
     private long accountId;
     private boolean active;
     private boolean blocked;
+    private boolean isDelivered;
 }

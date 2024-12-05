@@ -101,6 +101,10 @@ public class CardService {
             throw new BusinessException(Messages.CARD_ALREADY_ACTIVATED, HttpStatus.BAD_REQUEST);
         }
 
+        if (!card.getIsDelivered()) {
+            throw new BusinessException(Messages.CARD_NOT_YET_DELIVERED, HttpStatus.BAD_REQUEST);
+        }
+
         card.setActive(true);
 
         cardRepository.save(card);
@@ -128,5 +132,31 @@ public class CardService {
         return cards.stream()
                 .map(mapperUtils::mapToCardDTO)
                 .collect(Collectors.toList());
+    }
+
+    public void updateCVV(String cardNumber) {
+        Card card = cardRepository.findByCardNumber(cardNumber)
+                .orElseThrow(() -> new BusinessException(Messages.CARD_NOT_FOUND, HttpStatus.NOT_FOUND));
+
+        if (card.getCardType() != ECardType.VIRTUAL) {
+            throw new BusinessException(Messages.CVV_UPDATE_ONLY_FOR_VIRTUAL_CARDS, HttpStatus.BAD_REQUEST);
+        }
+
+        String newCVV = CardUtils.generateCvv();
+
+        card.setCvv(newCVV);
+        cardRepository.save(card);
+    }
+
+    public void registerDelivery(String cardNumber) {
+        Card card = cardRepository.findByCardNumber(cardNumber)
+                .orElseThrow(() -> new BusinessException(Messages.CARD_NOT_FOUND, HttpStatus.NOT_FOUND));
+
+        if (card.getCardType() == ECardType.VIRTUAL) {
+            throw new BusinessException(Messages.DELIVERY_ONLY_FOR_PHYSICAL_CARDS, HttpStatus.BAD_REQUEST);
+        }
+
+        card.setIsDelivered(true);
+        cardRepository.save(card);
     }
 }

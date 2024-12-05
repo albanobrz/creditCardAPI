@@ -4,6 +4,7 @@ public class Messages {
     public static final String CARD_ACTIVATED_SUCCESSFULLY = "Cartão ativado com sucesso.";
     public static final String ACCOUNT_DEACTIVATED_SUCCESSFULLY = "Conta desativada com sucesso.";
     public static final String CARD_BLOCKED_SUCCESSFULLY = "Cartão bloqueado com sucesso.";
+    public static final String RECEIVED = "Recebido.";
 
 
     public static final String CPF_ALREADY_REGISTERED = "CPF já cadastrado.";
@@ -19,5 +20,8 @@ public class Messages {
     public static final String CARD_NOT_FOUND = "Cartão não encontrado.";
     public static final String CARD_ALREADY_ACTIVATED = "Cartão já ativado.";
     public static final String CARD_ALREADY_BLOCKED = "Cartão já bloqueado.";
+    public static final String CVV_UPDATE_ONLY_FOR_VIRTUAL_CARDS = "Só se atualiza o CVV para cartões virtuais.";
+    public static final String DELIVERY_ONLY_FOR_PHYSICAL_CARDS = "Só se entrega cartões físicos.";
+    public static final String CARD_NOT_YET_DELIVERED = "Cartão ainda não entregue.";
 
 }

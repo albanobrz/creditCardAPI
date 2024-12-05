@@ -48,6 +48,10 @@ public class Card {
     @Column(nullable = false)
     private Boolean blocked = false;
 
+    @Builder.Default
+    @Column(nullable = false)
+    private Boolean isDelivered = false;
+
     @Column(nullable = false, updatable = false)
     private LocalDateTime createdAt;
 

@@ -53,6 +53,7 @@ public class MapperUtils {
                 .holderName(card.getHolderName())
                 .expirationDate(card.getExpirationDate())
                 .cvv(card.getCvv())
+                .isDelivered(card.getIsDelivered())
                 .accountId(card.getAccount().getId())
                 .blocked(card.getBlocked())
                 .build();
