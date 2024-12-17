@@ -48,6 +48,7 @@ class CardServiceTest {
         // given
         Card card = new Card();
         card.setCardNumber("12345");
+        card.setIsDelivered(true);
         card.setActive(false);
 
         when(cardRepository.findByCardNumber("12345")).thenReturn(Optional.of(card));

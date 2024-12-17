@@ -78,6 +78,12 @@ public class CardService {
         }
 
         if (cardType == ECardType.PHYSICAL) {
+            boolean hasActivePhysicalCard = physicalCards.stream().anyMatch(Card::getActive);
+
+            if (!physicalCards.isEmpty() && !hasActivePhysicalCard) {
+                throw new BusinessException(Messages.NOT_POSSIBLE_CREATE_CARD_WITHOUT_ACTIVATED_PHYSIC_CARD, HttpStatus.BAD_REQUEST);
+            }
+
             Card physicalCardToCreate = new Card();
             physicalCardToCreate.setAccount(account);
             physicalCardToCreate.setCardType(ECardType.PHYSICAL);
